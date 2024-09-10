@@ -1,0 +1,109 @@
+import sys
+from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QLabel, QLineEdit, QPushButton
+from PyQt5.QtCore import Qt
+from main import analyze
+
+class ClockInApp(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.name = "No Name Provided"
+        self.initUI()
+
+    def initUI(self):
+        self.setWindowTitle('Clock In App')
+        self.setGeometry(100, 100, 400, 200)
+
+        layout = QVBoxLayout()
+
+        description_label = QLabel("Clocking into work? Great! Please type your name and click the Clock In button to submit. Thanks!")
+        description_label.setStyleSheet('''
+            font-size: 16px; /* Increase font size */
+            font-family: Arial, sans-serif; /* Modern font family */
+            color: #fff;
+        ''')
+        layout.addWidget(description_label)
+
+        self.name_input = QLineEdit()
+        self.name_input.setStyleSheet('''
+            font-size: 14px; /* Increase font size */
+            font-family: Arial, sans-serif; /* Modern font family */
+            background-color: #444;
+            color: #fff;
+            border: 1px solid #000000;
+            border-radius: 5px;
+            padding: 5px;
+        ''')
+        layout.addWidget(self.name_input)
+
+        clock_in_button = QPushButton("Clock In")
+        clock_in_button.clicked.connect(self.clock_in)
+        clock_in_button.setStyleSheet('''
+            font-size: 16px; /* Increase font size */
+            font-family: Arial, sans-serif; /* Modern font family */
+            background-color: #402d2d;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            padding: 10px 20px; /* Increase padding */
+        ''')
+        layout.addWidget(clock_in_button)
+
+        self.result_label = QLabel()
+        self.result_label.setStyleSheet('''
+            font-size: 18px; /* Increase font size */
+            font-family: Arial, sans-serif; /* Modern font family */
+            color: #fff;
+            margin-top: 10px;
+        ''')
+        layout.addWidget(self.result_label)
+
+         # Add the "Press Q to clock out" label
+        clock_out_label = QLabel("Press Q to clock out")
+        clock_out_label.setStyleSheet('''
+            font-size: 14px; /* Adjust font size */
+            font-family: Arial, sans-serif; /* Modern font family */
+            color: #fff;
+        ''')
+        layout.addWidget(clock_out_label)
+
+        self.setLayout(layout)
+
+    def clock_in(self):
+        self.name = self.name_input.text()
+        # Check if the input is valid
+        if self.is_valid_input(self.name):
+            self.result_label.setText(f"Hello, {self.name}! You have clocked in.")
+            analyze(self.name)
+        else:
+            self.result_label.setText("Invalid input. Please enter a name with at least one alphabet or number.")
+
+    def is_valid_input(self, input_str):
+        try:
+            # Attempt to cast the input to a string
+            input_str = str(input_str)
+
+            # Check if the input contains at least one alphabet or number
+            if any(char.isalnum() for char in input_str):
+                return True
+            else:
+                return False
+        except:
+            return False
+
+if __name__ == '__main__':
+    app = QApplication(sys.argv)
+    window = ClockInApp()
+
+    # Apply a dark theme using CSS styling
+    app.setStyleSheet('''
+        QWidget {
+            background-color: #290b0b;
+            color: #fff;
+        }
+        QPushButton:hover {
+            background-color: #6b4c4c;
+        }
+    ''')
+
+    window.show()
+    sys.exit(app.exec_())
